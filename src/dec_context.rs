@@ -1,5 +1,5 @@
 /// Rounding modes.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 #[repr(u8)]
 pub enum Rounding {
   /// Round towards `+infinity`.
@@ -261,6 +261,7 @@ impl DecContext {
     context.status &= !mask;
     context
   }
+
   /// Initializes a context structure.
   ///
   /// `dec_context_default` - initialize a context structure.
@@ -328,6 +329,21 @@ impl DecContext {
     }
     context
   }
+
+  /// Returns current rounding mode.
+  ///
+  /// `dec_context_get_rounding` - return current rounding mode.
+  ///
+  /// `context` is the context structure to be queried.
+  ///
+  /// Returns the rounding mode.
+  ///
+  /// No error is possible.
+  ///
+  pub fn dec_context_get_rounding(context: &DecContext) -> Rounding {
+    context.round
+  }
+
   /// Sets status and raises trap if appropriate.
   ///
   /// `dec_context_set_status` - set status and raise trap if appropriate.
@@ -449,5 +465,19 @@ mod tests {
   fn test_dec_context_default_decimal_other() {
     let mut context = DecContext::default();
     DecContext::dec_context_default(&mut context, 37);
+  }
+
+  #[test]
+  fn test_dec_context_get_rounding() {
+    let mut context = DecContext::default();
+    assert_eq!(
+      Rounding::DecRoundHalfUp,
+      DecContext::dec_context_get_rounding(&context)
+    );
+    DecContext::dec_context_default(&mut context, DEC_INIT_DECIMAL32);
+    assert_eq!(
+      Rounding::DecRoundHalfEven,
+      DecContext::dec_context_get_rounding(&context)
+    );
   }
 }
