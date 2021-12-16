@@ -13,5 +13,9 @@ edition = "2021"
 dec-ext-flag = []
 # Enable subset arithmetic, conditional code flag, switch off for best performance.
 dec-subset = []
+# ???
+dec-use64 = []
+# ???
+dec-p-plus-alt = []
 
 [dependencies]
