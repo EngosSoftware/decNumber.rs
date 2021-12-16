@@ -244,9 +244,26 @@ impl Default for DecContext {
 }
 
 impl DecContext {
+  /// Clear bits in current status.
+  ///
+  /// `dec_context_clear_status` - clear bits in current status.
+  ///
+  /// `context` is the context structure to be queried.
+  ///
+  /// `mask` indicates the bits to be cleared (the status bit that corresponds
+  /// to each 1 bit in the mask is cleared).
+  ///
+  /// Returns updated context.
+  ///
+  /// No error is possible.
+  ///
+  pub fn dec_context_clear_status(context: &mut DecContext, mask: u32) -> &DecContext {
+    context.status &= !mask;
+    context
+  }
   /// Initializes a context structure.
   ///
-  /// `decContextDefault` - initialize a context structure.
+  /// `dec_context_default` - initialize a context structure.
   ///
   /// `context` is the structure to be initialized.
   ///
@@ -313,7 +330,7 @@ impl DecContext {
   }
   /// Sets status and raises trap if appropriate.
   ///
-  /// `decContextSetStatus` - set status and raise trap if appropriate.
+  /// `dec_context_set_status` - set status and raise trap if appropriate.
   ///
   /// `context` is the context structure to be updated.
   ///
@@ -351,6 +368,20 @@ mod tests {
   #[test]
   fn test_default_rounding() {
     assert_eq!(DEC_ROUND_DEFAULT, Rounding::DecRoundHalfEven);
+  }
+
+  #[test]
+  fn test_dec_context_clear_status() {
+    let mut context = DecContext::default();
+    assert_eq!(0, context.status);
+    context.status = !0;
+    assert_eq!(0xFFFFFFFF, context.status);
+    DecContext::dec_context_clear_status(&mut context, 0xF);
+    assert_eq!(0xFFFFFFF0, context.status);
+    DecContext::dec_context_clear_status(&mut context, 0xF0000000);
+    assert_eq!(0x0FFFFFF0, context.status);
+    DecContext::dec_context_clear_status(&mut context, 0x1000);
+    assert_eq!(0x0FFFEFF0, context.status);
   }
 
   #[test]
