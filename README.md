@@ -1,2 +1,3 @@
-# decNumber.rs
-Decimal Floating Point Rust Crate
+# Decimal Floating Point decNumber Rust Library
+
+
