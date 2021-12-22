@@ -1,13 +1,11 @@
-use crate::dec_double::DECBYTES;
+pub const DEC_QUAD_ZERO: u32 = 0x22080000;
 
-/* Top words for a zero                                           */
-pub const SINGLE_ZERO: u32 = 0x22500000;
-pub const DOUBLE_ZERO: u32 = 0x22380000;
-pub const QUAD_ZERO: u32 = 0x22080000;
-
-pub const ZERO_WORD: u32 = QUAD_ZERO;
-
-pub const DECWORDS: usize = (DECBYTES / 4) as usize;
+#[macro_export]
+macro_rules! exp_is_special {
+  ($exp:expr) => {
+    $exp >= DECFLOAT_MIN_SP
+  };
+}
 
 // #[macro_export]
 // macro_rules! df_word {
@@ -21,7 +19,7 @@ pub const DECWORDS: usize = (DECBYTES / 4) as usize;
 // #[cfg(test)]
 // mod tests {
 //   use super::*;
-//   use crate::dec_quad::DecQuad;
+//   use crate::dec_quad::{DECFLOAT_MIN_SP, DecQuad};
 //
 //   #[test]
 //   fn test_df_word() {

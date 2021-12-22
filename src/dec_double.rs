@@ -3,10 +3,13 @@
 //-----------------------------------------------------------------------------
 
 /// Length.
-pub const DECDOUBLE_BYTES: i32 = 8;
+pub const DECDOUBLE_BYTES: u32 = 8;
+
+/// Exponent continuation length.
+pub const DECDOUBLE_E_CON_L: u32 = 8;
 
 //-----------------------------------------------------------------------------
 // Constant mappings for shared code.
 //-----------------------------------------------------------------------------
 
-pub const DECBYTES: i32 = DECDOUBLE_BYTES;
+pub const DECBYTES: u32 = DECDOUBLE_BYTES;

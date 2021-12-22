@@ -1,5 +1,6 @@
 //! # Decimal Floating Point decNumber Rust Library
 
+pub mod dec_common;
 pub mod dec_context;
 pub mod dec_double;
 pub mod dec_dpd;
