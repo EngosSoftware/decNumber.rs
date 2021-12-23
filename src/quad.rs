@@ -1,6 +1,3 @@
-use crate::dpd::BIN2DPD;
-use std::fmt::{Debug, Formatter};
-
 // ----------------------------------------------------------------
 // Parameters for DecQuads
 // ----------------------------------------------------------------
@@ -83,6 +80,7 @@ pub const DEC_QUAD_NEGATIVE_ZERO: DecQuad = DecQuad {
 
 /// The DecQuad decimal 128-bit type.
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union DecQuad {
   pub bytes: [u8; 16],
   pub shorts: [u16; 8],
@@ -90,9 +88,9 @@ pub union DecQuad {
   pub longs: [u64; 2],
 }
 
-impl Debug for DecQuad {
+impl std::fmt::Debug for DecQuad {
   /// Converts [DecQuad] to a string containing hexadecimal bytes.
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(
       f,
       "[{}]",
@@ -106,200 +104,17 @@ impl Debug for DecQuad {
   }
 }
 
+impl DecQuad {
+  ///
+  pub fn is_negative(&self) -> bool {
+    unsafe { (self.bytes[15] & 0x80) > 0 }
+  }
+}
+
 impl Default for DecQuad {
   /// Initializes [DecQuad] with zeros.
   fn default() -> Self {
     DEC_QUAD_POSITIVE_ZERO
-  }
-}
-
-impl From<i8> for DecQuad {
-  /// Returns a [DecQuad] initialized from [i8] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: i8) -> Self {
-    let mut unsigned = n as u8;
-    let mut dq = if n < 0 {
-      unsigned = (!unsigned) + 1;
-      DEC_QUAD_NEGATIVE_ZERO
-    } else {
-      DEC_QUAD_POSITIVE_ZERO
-    };
-    unsafe {
-      dq.shorts[0] = BIN2DPD[unsigned as usize];
-    }
-    dq
-  }
-}
-
-impl From<u8> for DecQuad {
-  /// Returns a [DecQuad] initialized from [u8] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: u8) -> Self {
-    let mut dq = DEC_QUAD_POSITIVE_ZERO;
-    unsafe {
-      dq.shorts[0] = BIN2DPD[n as usize];
-    }
-    dq
-  }
-}
-
-impl From<i16> for DecQuad {
-  /// Returns a [DecQuad] initialized from [i16] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: i16) -> Self {
-    let mut unsigned = n as u16;
-    let mut dq = if n < 0 {
-      unsigned = (!unsigned) + 1;
-      DEC_QUAD_NEGATIVE_ZERO
-    } else {
-      DEC_QUAD_POSITIVE_ZERO
-    };
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u32;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u32) << 10;
-    unsigned /= 1000;
-    encoded |= (unsigned as u32) << 20;
-    unsafe {
-      dq.words[0] = encoded;
-    }
-    dq
-  }
-}
-
-impl From<u16> for DecQuad {
-  /// Returns a [DecQuad] initialized from [u16] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: u16) -> Self {
-    let mut dq = DEC_QUAD_POSITIVE_ZERO;
-    let mut unsigned = n;
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u32;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u32) << 10;
-    unsigned /= 1000;
-    encoded |= (unsigned as u32) << 20;
-    unsafe {
-      dq.words[0] = encoded;
-    }
-    dq
-  }
-}
-
-impl From<i32> for DecQuad {
-  /// Returns a [DecQuad] initialized from [i32] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: i32) -> Self {
-    let mut unsigned = n as u32;
-    let mut dq = if n < 0 {
-      unsigned = (!unsigned) + 1;
-      DEC_QUAD_NEGATIVE_ZERO
-    } else {
-      DEC_QUAD_POSITIVE_ZERO
-    };
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u64;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 10;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 20;
-    unsigned /= 1000;
-    encoded |= (unsigned as u64) << 30;
-    unsafe {
-      dq.longs[0] = encoded;
-    }
-    dq
-  }
-}
-
-impl From<u32> for DecQuad {
-  /// Returns a [DecQuad] initialized from [u32] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: u32) -> Self {
-    let mut dq = DEC_QUAD_POSITIVE_ZERO;
-    let mut unsigned = n;
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u64;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 10;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 20;
-    unsigned /= 1000;
-    encoded |= (unsigned as u64) << 30;
-    unsafe {
-      dq.longs[0] = encoded;
-    }
-    dq
-  }
-}
-
-impl From<i64> for DecQuad {
-  /// Returns a [DecQuad] initialized from [i64] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: i64) -> Self {
-    let mut unsigned = n as u64;
-    let mut dq = if n < 0 {
-      unsigned = (!unsigned) + 1;
-      DEC_QUAD_NEGATIVE_ZERO
-    } else {
-      DEC_QUAD_POSITIVE_ZERO
-    };
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u64;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 10;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 20;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 30;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 40;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 50;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 60;
-    unsafe {
-      dq.longs[0] = encoded;
-    }
-    dq
-  }
-}
-
-impl From<u64> for DecQuad {
-  /// Returns a [DecQuad] initialized from [u64] value.
-  ///
-  /// Result is exact, without any errors or exceptions.
-  ///
-  fn from(n: u64) -> Self {
-    let mut dq = DEC_QUAD_POSITIVE_ZERO;
-    let mut unsigned = n;
-    let mut encoded = BIN2DPD[(unsigned % 1000) as usize] as u64;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 10;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 20;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 30;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 40;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 50;
-    unsigned /= 1000;
-    encoded |= (BIN2DPD[(unsigned % 1000) as usize] as u64) << 60;
-    unsafe {
-      dq.longs[0] = encoded;
-      dq.longs[1] |= (unsigned >> 4) as u64;
-    }
-    dq
   }
 }
 
@@ -314,12 +129,6 @@ mod tests {
   use super::*;
   use std::mem::size_of;
 
-  macro_rules! assert_from {
-    ($expected:expr, $actual:expr) => {
-      assert_eq!($expected, format!("{:?}", DecQuad::from($actual)))
-    };
-  }
-
   #[test]
   fn test_dec_quad_default() {
     let dec_quad = DecQuad::default();
@@ -329,132 +138,5 @@ mod tests {
   #[test]
   fn test_dec_quad_union_size() {
     assert_eq!(128, 8 * size_of::<DecQuad>());
-  }
-
-  #[test]
-  fn test_dec_quad_from_i8() {
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 A8]", i8::MIN);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", -100_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", -10_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", -1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", -0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 A7]", i8::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_u8() {
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 01 55]", u8::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_i16() {
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 CB E8]", i16::MIN);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 40 00]", -10_000_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", -1_000_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", -100_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", -10_i16);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", -1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", -0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 40 00]", 10_000_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 CB E7]", i16::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_u16() {
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 40 00]", 10_000_i16);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 01 96 B5]", u16::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_i32() {
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 8C 78 AF 48]", i32::MIN);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", -1_000_000_i32);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", -1_000_i32);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", -100_i32);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", -10_i32);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", -1_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", -0_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", 1_000_000_i32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 8C 78 AF 47]", i32::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_u32() {
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", 1_000_000_u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 8C 78 AF 47]", i32::MAX as u32);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 01 15 AF B5 5B]", u32::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_i64() {
-    assert_from!("[A2 08 00 00 00 00 00 00 94 8D F2 0D A5 CF D4 2E]", i64::MIN);
-    assert_from!("[A2 08 00 00 00 00 00 00 10 00 00 00 00 00 00 00]", -1_000_000_000_000_000_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 04 00 00 00 00 00 00]", -1_000_000_000_000_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 01 00 00 00 00 00]", -1_000_000_000_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 40 00 00 00]", -1_000_000_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", -1_000_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", -1_000_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", -100_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", -10_i64);
-    assert_from!("[A2 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", -1_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", -0_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", 1_000_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 40 00 00 00]", 1_000_000_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 01 00 00 00 00 00]", 1_000_000_000_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 04 00 00 00 00 00 00]", 1_000_000_000_000_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 10 00 00 00 00 00 00 00]", 1_000_000_000_000_000_000_i64);
-    assert_from!("[22 08 00 00 00 00 00 00 94 8D F2 0D A5 CF D7 0D]", i64::MAX);
-  }
-
-  #[test]
-  fn test_dec_quad_from_u64() {
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", 0_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 01]", 1_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 10]", 10_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 00 80]", 100_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 00 04 00]", 1_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 00 10 00 00]", 1_000_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 00 00 40 00 00 00]", 1_000_000_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 00 01 00 00 00 00 00]", 1_000_000_000_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 00 04 00 00 00 00 00 00]", 1_000_000_000_000_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 10 00 00 00 00 00 00 00]", 1_000_000_000_000_000_000_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 19 33 74 81 DF 0B 74 69]", 1_844_674_407_370_955_069_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 94 8D F2 0D A5 CF D7 0D]", 9_223_372_036_854_775_807_u64);
-    assert_from!("[22 08 00 00 00 00 00 01 89 1B C4 1C F8 9B 43 10]", 18_446_744_073_709_550_610_u64);
-    assert_from!("[22 08 00 00 00 00 00 00 63 22 9C C6 D3 6A 5D 05]", u64::MAX / 3);
-    assert_from!("[22 08 00 00 00 00 00 01 89 1B C4 1C F8 9B 47 15]", u64::MAX);
   }
 }

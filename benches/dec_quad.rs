@@ -60,3 +60,27 @@ fn bench_dec_quad_from_u64(b: &mut Bencher) {
     let _ = DecQuad::from(1_u64);
   });
 }
+
+#[bench]
+fn bench_i8_from_dec_quad(b: &mut Bencher) {
+  let dq = DecQuad::from(1_i8);
+  b.iter(move || {
+    let _ = i8::try_from(dq);
+  });
+}
+
+#[bench]
+fn bench_i64_from_dec_quad(b: &mut Bencher) {
+  let dq = DecQuad::from(1_i64);
+  b.iter(move || {
+    let _ = i64::try_from(dq);
+  });
+}
+
+#[bench]
+fn bench_u64_from_dec_quad(b: &mut Bencher) {
+  let dq = DecQuad::from(1_u64);
+  b.iter(move || {
+    let _ = u64::try_from(dq);
+  });
+}
