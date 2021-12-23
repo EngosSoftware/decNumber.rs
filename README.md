@@ -1,6 +1,4 @@
-# Decimal Floating Point decNumber Rust Library
-
-## Project status
+# Decimal Floating Point Arithmetic for Rust
 
 Work in progress.
 

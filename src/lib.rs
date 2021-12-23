@@ -1,8 +1,8 @@
-//! # Decimal Floating Point decNumber Rust Library
+//! # Decimal Floating Point Arithmetic for Rust
 
 pub mod dec_common;
 pub mod dec_context;
-pub mod dec_double;
-pub mod dec_dpd;
-pub mod dec_number_local;
-pub mod dec_quad;
+pub mod decimal128;
+pub mod dpd;
+pub mod quad;
+pub mod tables;
