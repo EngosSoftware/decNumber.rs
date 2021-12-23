@@ -9,6 +9,11 @@ tasks:
     cmds:
       - cmd: cargo build
 
+  bench:
+    desc: Runs benchmarks
+    cmds:
+      - cmd: cargo bench -q | grep 'test bench_'
+
   clean:
     desc: Cleans all targets
     cmds:
