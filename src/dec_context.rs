@@ -184,10 +184,8 @@ pub const DEC_IEEE_754_OVERFLOW: u32 = DEC_OVERFLOW;
 pub const DEC_IEEE_754_UNDERFLOW: u32 = DEC_UNDERFLOW;
 
 /// Flags which are normally errors (result is qNaN, infinite, or 0).
-pub const DEC_ERRORS: u32 = DEC_IEEE_754_DIVISION_BY_ZERO
-  | DEC_IEEE_754_INVALID_OPERATION
-  | DEC_IEEE_754_OVERFLOW
-  | DEC_IEEE_754_UNDERFLOW;
+pub const DEC_ERRORS: u32 =
+  DEC_IEEE_754_DIVISION_BY_ZERO | DEC_IEEE_754_INVALID_OPERATION | DEC_IEEE_754_OVERFLOW | DEC_IEEE_754_UNDERFLOW;
 
 /// Flags which cause a result to become qNaN.
 pub const DEC_NANS: u32 = DEC_IEEE_754_INVALID_OPERATION;
@@ -470,10 +468,7 @@ mod tests {
   #[test]
   fn test_dec_context_get_rounding() {
     let mut context = DecContext::default();
-    assert_eq!(
-      Rounding::DecRoundHalfUp,
-      DecContext::dec_context_get_rounding(&context)
-    );
+    assert_eq!(Rounding::DecRoundHalfUp, DecContext::dec_context_get_rounding(&context));
     DecContext::dec_context_default(&mut context, DEC_INIT_DECIMAL32);
     assert_eq!(
       Rounding::DecRoundHalfEven,

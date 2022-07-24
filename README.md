@@ -1,5 +1,3 @@
 # Decimal Floating Point Arithmetic for Rust
 
-Work in progress.
-
-
+WORK IN PROGRESS

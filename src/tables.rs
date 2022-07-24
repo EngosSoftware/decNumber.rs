@@ -38,7 +38,9 @@ fn print_dpd2bin_table() {
 
 ///
 fn bcd2dpd(bcd: [u8; 12]) -> [u8; 10] {
-  let (a, b, c, d, e, f, g, h, i, j, k, m) = (bcd[0], bcd[1], bcd[2], bcd[3], bcd[4], bcd[5], bcd[6], bcd[7], bcd[8], bcd[9], bcd[10], bcd[11]);
+  let (a, b, c, d, e, f, g, h, i, j, k, m) = (
+    bcd[0], bcd[1], bcd[2], bcd[3], bcd[4], bcd[5], bcd[6], bcd[7], bcd[8], bcd[9], bcd[10], bcd[11],
+  );
   [
     b | (a & j) | (a & f & i),
     c | (a & k) | (a & g & i),
@@ -55,7 +57,9 @@ fn bcd2dpd(bcd: [u8; 12]) -> [u8; 10] {
 
 ///
 fn dpd2bcd(dpd: [u8; 10]) -> [u8; 12] {
-  let (p, q, r, s, t, u, v, w, x, y) = (dpd[0], dpd[1], dpd[2], dpd[3], dpd[4], dpd[5], dpd[6], dpd[7], dpd[8], dpd[9]);
+  let (p, q, r, s, t, u, v, w, x, y) = (
+    dpd[0], dpd[1], dpd[2], dpd[3], dpd[4], dpd[5], dpd[6], dpd[7], dpd[8], dpd[9],
+  );
   [
     (v & w) & (!s | t | !x),
     p & (!v | !w | (s & !t & x)),
@@ -147,7 +151,12 @@ mod tests {
     let mut work = [0_u16; 1000];
     for i in 0..1000 {
       work[i] = dpd2int(bcd2dpd(int2bcd(i as u16)));
-      println!("{:>5} {:>5}  {}", i, work[i], if work[i] == BIN2DPD[i] { "OK" } else { "ERROR" });
+      println!(
+        "{:>5} {:>5}  {}",
+        i,
+        work[i],
+        if work[i] == BIN2DPD[i] { "OK" } else { "ERROR" }
+      );
     }
   }
 
