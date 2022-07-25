@@ -179,6 +179,10 @@ impl From<u64> for DecQuad {
   }
 }
 
+//const NUMBER_PATTERN: &str = r#"(?P<sign>(-|+))?(?P<year>[1-9][0-9]{3,8})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})"#;
+// const NUMBER_PATTERN: &str =
+//   r#"(?P<sign>(-|+))?(?P<digits>[0-9])-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})"#;
+
 impl From<&str> for DecQuad {
   fn from(s: &str) -> Self {
     // when the string is empty, just return NaN
