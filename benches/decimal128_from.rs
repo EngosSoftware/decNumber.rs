@@ -2,7 +2,7 @@
 
 extern crate test;
 
-use dec_number::decimal128::Decimal128;
+use dec_number::Decimal128;
 use test::Bencher;
 
 #[bench]

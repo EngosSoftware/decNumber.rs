@@ -39,7 +39,8 @@ fn print_dpd2bin_table() {
 ///
 fn bcd2dpd(bcd: [u8; 12]) -> [u8; 10] {
   let (a, b, c, d, e, f, g, h, i, j, k, m) = (
-    bcd[0], bcd[1], bcd[2], bcd[3], bcd[4], bcd[5], bcd[6], bcd[7], bcd[8], bcd[9], bcd[10], bcd[11],
+    bcd[0], bcd[1], bcd[2], bcd[3], bcd[4], bcd[5], bcd[6], bcd[7], bcd[8],
+    bcd[9], bcd[10], bcd[11],
   );
   [
     b | (a & j) | (a & f & i),
@@ -58,7 +59,8 @@ fn bcd2dpd(bcd: [u8; 12]) -> [u8; 10] {
 ///
 fn dpd2bcd(dpd: [u8; 10]) -> [u8; 12] {
   let (p, q, r, s, t, u, v, w, x, y) = (
-    dpd[0], dpd[1], dpd[2], dpd[3], dpd[4], dpd[5], dpd[6], dpd[7], dpd[8], dpd[9],
+    dpd[0], dpd[1], dpd[2], dpd[3], dpd[4], dpd[5], dpd[6], dpd[7], dpd[8],
+    dpd[9],
   );
   [
     (v & w) & (!s | t | !x),
@@ -136,7 +138,10 @@ pub fn bcd2chr(bcd: [u8; 12]) -> [char; 3] {
   let chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   let mut result = ['0'; 3];
   for i in 0..3 {
-    result[i] = chars[(bcd[i * 4] << 3 | bcd[1 + (i * 4)] << 2 | bcd[2 + (i * 4)] << 1 | bcd[3 + (i * 4)]) as usize];
+    result[i] = chars[(bcd[i * 4] << 3
+      | bcd[1 + (i * 4)] << 2
+      | bcd[2 + (i * 4)] << 1
+      | bcd[3 + (i * 4)]) as usize];
   }
   result
 }

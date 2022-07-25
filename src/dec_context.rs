@@ -184,15 +184,18 @@ pub const DEC_IEEE_754_OVERFLOW: u32 = DEC_OVERFLOW;
 pub const DEC_IEEE_754_UNDERFLOW: u32 = DEC_UNDERFLOW;
 
 /// Flags which are normally errors (result is qNaN, infinite, or 0).
-pub const DEC_ERRORS: u32 =
-  DEC_IEEE_754_DIVISION_BY_ZERO | DEC_IEEE_754_INVALID_OPERATION | DEC_IEEE_754_OVERFLOW | DEC_IEEE_754_UNDERFLOW;
+pub const DEC_ERRORS: u32 = DEC_IEEE_754_DIVISION_BY_ZERO
+  | DEC_IEEE_754_INVALID_OPERATION
+  | DEC_IEEE_754_OVERFLOW
+  | DEC_IEEE_754_UNDERFLOW;
 
 /// Flags which cause a result to become qNaN.
 pub const DEC_NANS: u32 = DEC_IEEE_754_INVALID_OPERATION;
 
 /// Flags which are normally for information only (finite results).
 #[cfg(feature = "dec-subset")]
-pub const DEC_INFORMATION: u32 = DEC_CLAMPED | DEC_ROUNDED | DEC_INEXACT | DEC_LOST_DIGITS;
+pub const DEC_INFORMATION: u32 =
+  DEC_CLAMPED | DEC_ROUNDED | DEC_INEXACT | DEC_LOST_DIGITS;
 /// Flags which are normally for information only (finite results).
 #[cfg(not(feature = "dec-subset"))]
 pub const DEC_INFORMATION: u32 = DEC_CLAMPED | DEC_ROUNDED | DEC_INEXACT;
@@ -255,7 +258,10 @@ impl DecContext {
   ///
   /// No error is possible.
   ///
-  pub fn dec_context_clear_status(context: &mut DecContext, mask: u32) -> &DecContext {
+  pub fn dec_context_clear_status(
+    context: &mut DecContext,
+    mask: u32,
+  ) -> &DecContext {
     context.status &= !mask;
     context
   }
@@ -277,7 +283,10 @@ impl DecContext {
   ///
   ///  Returns a context structure with the appropriate initial values.
   ///
-  pub fn dec_context_default(context: &mut DecContext, kind: i32) -> &DecContext {
+  pub fn dec_context_default(
+    context: &mut DecContext,
+    kind: i32,
+  ) -> &DecContext {
     match kind {
       DEC_INIT_BASE => {
         // Use defaults, when the context is initialized, it has already
@@ -354,7 +363,10 @@ impl DecContext {
   ///
   /// Control may never return from this routine, if there is a signal handler and it panics.
   ///
-  pub fn dec_context_set_status(context: &mut DecContext, status: u32) -> &DecContext {
+  pub fn dec_context_set_status(
+    context: &mut DecContext,
+    status: u32,
+  ) -> &DecContext {
     context.status |= status;
     if (status & context.traps) != 0 {
       panic!("SIGFPE");
@@ -468,7 +480,10 @@ mod tests {
   #[test]
   fn test_dec_context_get_rounding() {
     let mut context = DecContext::default();
-    assert_eq!(Rounding::DecRoundHalfUp, DecContext::dec_context_get_rounding(&context));
+    assert_eq!(
+      Rounding::DecRoundHalfUp,
+      DecContext::dec_context_get_rounding(&context)
+    );
     DecContext::dec_context_default(&mut context, DEC_INIT_DECIMAL32);
     assert_eq!(
       Rounding::DecRoundHalfEven,

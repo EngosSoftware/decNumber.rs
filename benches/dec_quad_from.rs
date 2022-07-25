@@ -2,7 +2,7 @@
 
 extern crate test;
 
-use dec_number::quad::DecQuad;
+use dec_number::dec_quad::DecQuad;
 use test::Bencher;
 
 #[bench]

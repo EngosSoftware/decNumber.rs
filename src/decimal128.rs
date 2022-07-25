@@ -24,13 +24,37 @@
 
 //! `Decimal128`
 
-use crate::quad::DecQuad;
+use crate::dec_quad::DecQuad;
+use std::fmt::Debug;
 
 #[repr(C)]
 pub struct Decimal128(DecQuad);
 
-impl std::fmt::Debug for Decimal128 {
-  /// Converts [Decimal128] to a string of hexadecimal bytes.
+impl Decimal128 {
+  /// Returns the absolute value of this [Decimal128].
+  pub fn abs(&self) -> Self {
+    Self(self.0.abs())
+  }
+  /// Returns `true` if this [Decimal128] is less than zero and not a `NaN`, or `false` otherwise.
+  pub fn is_negative(&self) -> bool {
+    self.0.is_negative()
+  }
+  /// Returns `true` if this [Decimal128] has a sign, or 0 otherwise.
+  /// Note that zeros and NaNs may also have a sign.
+  pub fn is_signed(&self) -> bool {
+    self.0.is_signed()
+  }
+}
+
+impl Default for Decimal128 {
+  /// The default value for [Decimal128] is positive zero.
+  fn default() -> Self {
+    Self(DecQuad::default())
+  }
+}
+
+impl Debug for Decimal128 {
+  /// Converts [Decimal128] to a string in the form of hexadecimal bytes separated with spaces.
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(f, "{:?}", self.0)
   }
