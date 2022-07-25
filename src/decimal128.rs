@@ -56,6 +56,10 @@ impl Decimal128 {
   pub fn is_zero(&self) -> bool {
     self.0.is_zero()
   }
+  /// Returns `true` if this [Decimal128] is a NaN (quiet or signaling), or 0 otherwise.
+  pub fn is_nan(&self) -> bool {
+    self.0.is_nan()
+  }
 }
 
 impl Default for Decimal128 {

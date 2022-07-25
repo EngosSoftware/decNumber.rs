@@ -96,24 +96,14 @@ impl DecQuad {
     };
     canonical
   }
-  /// Returns `true` if this [DecQuad] is less than zero and not a `NaN`,
-  /// or `false` otherwise.
+  /// Returns `true` if this [DecQuad] is less than zero and not a `NaN`, or `false` otherwise.
   pub fn is_negative(&self) -> bool {
-    unsafe { (self.bytes[15] & 0x80) > 0 }
+    self.is_signed() && !self.is_zero() && !self.is_nan()
   }
   /// Returns `true` if this [DecQuad] has a sign, or 0 otherwise.
   /// Note that zeros and NaNs may also have a sign.
   pub fn is_signed(&self) -> bool {
-    unsafe {
-      #[cfg(target_endian = "little")]
-      {
-        self.words[DEC_QUAD_WORDS - 1] & DECFLOAT_SIGN != 0
-      }
-      #[cfg(target_endian = "big")]
-      {
-        self.words[0] & DECFLOAT_SIGN != 0
-      }
-    }
+    (self.get_word(0) & DECFLOAT_SIGN) != 0
   }
   /// Returns `true` if this [DecQuad] is a zero, or 0 otherwise.
   pub fn is_zero(&self) -> bool {
@@ -122,6 +112,10 @@ impl DecQuad {
       && self.get_word(1) == &0
       && (self.get_word(0) & 0x1c003fff) == 0
       && (self.get_word(0) & 0x60000000) != 0x60000000
+  }
+  /// Returns `true` if this [DecQuad] is a NaN (quiet or signaling), or 0 otherwise.
+  pub fn is_nan(&self) -> bool {
+    (self.get_word(0) & DECFLOAT_NAN) == DECFLOAT_NAN
   }
   /// Returns a canonical copy of this [DecQuad].
   fn canonical(&self) -> DecQuad {
