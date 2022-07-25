@@ -51,19 +51,15 @@ pub const DECFLOAT_INF: Uint = 0x78000000;
 pub const DECFLOAT_MIN_SP: Uint = 0x78000000;
 
 ///
-pub const DEC_QUAD_POSITIVE_ZERO: DecQuad = DecQuad {
-  bytes: [
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x08, 0x22,
-  ],
+#[rustfmt::skip]
+pub(crate) const DEC_QUAD_POSITIVE_ZERO: DecQuad = DecQuad {
+  bytes: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x22],
 };
 
 ///
-pub const DEC_QUAD_NEGATIVE_ZERO: DecQuad = DecQuad {
-  bytes: [
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x08, 0xA2,
-  ],
+#[rustfmt::skip]
+pub(crate) const DEC_QUAD_NEGATIVE_ZERO: DecQuad = DecQuad {
+  bytes: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0xA2 ],
 };
 
 /// The decimal 128-bit type accessible by all sizes.
@@ -77,6 +73,14 @@ pub union DecQuad {
 }
 
 impl DecQuad {
+  /// Returns new [DecQuad] set to zero.
+  pub fn zero() -> Self {
+    DEC_QUAD_POSITIVE_ZERO
+  }
+  /// Returns new [DecQuad] set to negative zero.
+  pub fn negative_zero() -> Self {
+    DEC_QUAD_NEGATIVE_ZERO
+  }
   /// Returns the absolute value of this [DecQuad].
   pub fn abs(&self) -> DecQuad {
     let mut canonical = self.canonical();
@@ -110,6 +114,14 @@ impl DecQuad {
         self.words[0] & DECFLOAT_SIGN != 0
       }
     }
+  }
+  /// Returns `true` if this [DecQuad] is a zero, or 0 otherwise.
+  pub fn is_zero(&self) -> bool {
+    self.get_word(3) == &0
+      && self.get_word(2) == &0
+      && self.get_word(1) == &0
+      && (self.get_word(0) & 0x1c003fff) == 0
+      && (self.get_word(0) & 0x60000000) != 0x60000000
   }
   /// Returns a canonical copy of this [DecQuad].
   fn canonical(&self) -> DecQuad {

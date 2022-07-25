@@ -31,6 +31,14 @@ use std::fmt::Debug;
 pub struct Decimal128(DecQuad);
 
 impl Decimal128 {
+  /// Returns new [Decimal128] set to zero.
+  pub fn zero() -> Self {
+    Self(DecQuad::zero())
+  }
+  /// Returns new [Decimal128] set to negative zero.
+  pub fn negative_zero() -> Self {
+    Self(DecQuad::negative_zero())
+  }
   /// Returns the absolute value of this [Decimal128].
   pub fn abs(&self) -> Self {
     Self(self.0.abs())
@@ -43,6 +51,10 @@ impl Decimal128 {
   /// Note that zeros and NaNs may also have a sign.
   pub fn is_signed(&self) -> bool {
     self.0.is_signed()
+  }
+  /// Returns `true` if this [Decimal128] is a zero, or 0 otherwise.
+  pub fn is_zero(&self) -> bool {
+    self.0.is_zero()
   }
 }
 
