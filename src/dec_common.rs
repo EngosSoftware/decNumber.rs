@@ -1,3 +1,6 @@
+/// Type alias for u8.
+pub type Ubyte = u8;
+
 /// Type alias for u32.
 pub type Uint = u32;
 

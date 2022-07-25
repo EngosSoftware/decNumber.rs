@@ -47,16 +47,16 @@ impl Decimal128 {
   pub fn is_negative(&self) -> bool {
     self.0.is_negative()
   }
-  /// Returns `true` if this [Decimal128] has a sign, or 0 otherwise.
+  /// Returns `true` if this [Decimal128] has a sign, or `false` otherwise.
   /// Note that zeros and NaNs may also have a sign.
   pub fn is_signed(&self) -> bool {
     self.0.is_signed()
   }
-  /// Returns `true` if this [Decimal128] is a zero, or 0 otherwise.
+  /// Returns `true` if this [Decimal128] is a zero, or `false` otherwise.
   pub fn is_zero(&self) -> bool {
     self.0.is_zero()
   }
-  /// Returns `true` if this [Decimal128] is a NaN (quiet or signaling), or 0 otherwise.
+  /// Returns `true` if this [Decimal128] is a NaN (quiet or signaling), or `false` otherwise.
   pub fn is_nan(&self) -> bool {
     self.0.is_nan()
   }
