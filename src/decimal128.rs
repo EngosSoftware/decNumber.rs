@@ -131,3 +131,10 @@ impl From<u64> for Decimal128 {
     Self(DecQuad::from(n))
   }
 }
+
+impl From<&str> for Decimal128 {
+  /// Returns a [Decimal128] initialized from string slice value.
+  fn from(s: &str) -> Self {
+    Self(DecQuad::from(s))
+  }
+}

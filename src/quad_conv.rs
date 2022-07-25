@@ -1,5 +1,7 @@
 use crate::dec_quad::{
-  DecQuad, DEC_QUAD_NEGATIVE_ZERO, DEC_QUAD_POSITIVE_ZERO,
+  DecQuad, DEC_QUAD_NEGATIVE_INFINITY, DEC_QUAD_NEGATIVE_NAN,
+  DEC_QUAD_NEGATIVE_ZERO, DEC_QUAD_POSITIVE_INFINITY, DEC_QUAD_POSITIVE_NAN,
+  DEC_QUAD_POSITIVE_ZERO,
 };
 use crate::dpd::{BIN2DPD, DPD2BIN};
 
@@ -174,6 +176,22 @@ impl From<u64> for DecQuad {
       dq.bytes[8] = (unsigned >> 4) as u8;
     }
     dq
+  }
+}
+
+impl From<&str> for DecQuad {
+  fn from(s: &str) -> Self {
+    // when the string is empty, just return NaN
+    if s.is_empty() {
+      return DEC_QUAD_POSITIVE_NAN;
+    }
+    match s.to_uppercase().trim() {
+      "INF" | "+INF" | "INFINITY" | "+INFINITY" => DEC_QUAD_POSITIVE_INFINITY,
+      "-INF" | "-INFINITY" => DEC_QUAD_NEGATIVE_INFINITY,
+      "NAN" | "+NAN" => DEC_QUAD_POSITIVE_NAN,
+      "-NAN" => DEC_QUAD_NEGATIVE_NAN,
+      _ => DEC_QUAD_POSITIVE_ZERO,
+    }
   }
 }
 
@@ -433,5 +451,30 @@ mod tests {
     assert_eq!(Ok(9_223_372_036_854_775_807_u64), u64::try_from(DecQuad::from(9_223_372_036_854_775_807_u64)));
     assert_eq!(Ok(18_446_744_073_709_550_610_u64), u64::try_from(DecQuad::from(18_446_744_073_709_550_610_u64)));
     assert_eq!(Ok(u64::MAX), u64::try_from(DecQuad::from(u64::MAX)));
+  }
+
+  #[test]
+  fn test_u64_from_string() {
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from(""));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("inf"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("INF"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("InF"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+inf"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+INF"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+InF"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("infinity"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("INFINITY"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("iNfInItY"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+infinity"));
+    assert_from!("[78 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+InFiNiTy"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("nan"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("NAN"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("NaN"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+nan"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+NAN"));
+    assert_from!("[7C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("+nAn"));
+    assert_from!("[FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("-nan"));
+    assert_from!("[FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("-NAN"));
+    assert_from!("[FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]", DecQuad::from("-NaN"));
   }
 }

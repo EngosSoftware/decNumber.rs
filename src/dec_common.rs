@@ -4,6 +4,9 @@ pub type Ubyte = u8;
 /// Type alias for u32.
 pub type Uint = u32;
 
+/// Type alias for i32.
+pub type Int = i32;
+
 // ----------------------------------------------------------------------------
 // Top words for a zero
 // ----------------------------------------------------------------------------
@@ -55,4 +58,9 @@ pub fn canonical_dpd_two(hi: &Uint, lo: &Uint, k: usize) -> bool {
   ((hi) & (0x300 >> (32 - (k)))) == 0
     || ((hi) & (0x6e >> (32 - (k)))) != (0x6e >> (32 - (k)))
     || ((lo) & ((0x6e_u32) << (k))) != ((0x6e_u32) << (k))
+}
+
+/// Round an integer up to a multiple of n.
+pub fn round_up(i: usize, n: usize) -> usize {
+  (((i) + (n) - 1) / n) * n
 }
