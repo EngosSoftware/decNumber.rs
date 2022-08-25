@@ -1,3 +1,5 @@
-# Decimal Floating Point Arithmetic for Rust
+# Decimal floating point arithmetic for Rust
 
-WORK IN PROGRESS
+based on bindings for **The decNumber C Library by IBM Fellow Mike Cowlishaw**
+
+**WORK IN PROGRESS**
